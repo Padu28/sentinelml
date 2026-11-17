@@ -1,0 +1,34 @@
+# ---------------------------------------------------------------
+# SentinelML — data configuration
+# ---------------------------------------------------------------
+# The default source is a *synthetic controlled stream* with known drift
+# ground truth. It is clearly labelled synthetic and is used to measure
+# detector behaviour, not to claim real-world performance.
+source: synthetic          # synthetic | csv
+csv_path: data/raw/stream.csv
+
+synthetic:
+  n_records: 12000
+  drift_start: 6000        # index of first drifted record (ground truth)
+  drift_width: 1500        # transition length for gradual / incremental drift
+  recurring_period: 1500   # period for recurring drift
+  quality_fault_batches: [30, 38]   # batches with injected data-quality faults
+
+stream:
+  batch_size: 250
+  train_records: 3000      # first N records (chronological) train the initial champion
+  timestamp_col: timestamp
+  target_col: label
+
+schema:
+  columns:
+    timestamp: {dtype: datetime}
+    sensor_a:  {dtype: float, min: -10, max: 10}
+    sensor_b:  {dtype: float, min: -10, max: 10}
+    sensor_c:  {dtype: float, min: -10, max: 10}
+    load_kw:   {dtype: float, min: 0,   max: 500}
+    temp_c:    {dtype: float, min: -40, max: 80}
+    region:    {dtype: category, allowed: [north, south, east, west]}
+    label:     {dtype: int, allowed: [0, 1]}
+  numeric_features: [sensor_a, sensor_b, sensor_c, load_kw, temp_c]
+  categorical_features: [region]

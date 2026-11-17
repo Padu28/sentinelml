@@ -1,0 +1,27 @@
+# ---------------------------------------------------------------
+# SentinelML — monitoring & experiment configuration
+# ---------------------------------------------------------------
+drift:
+  psi_threshold: 0.2          # PSI > 0.2 → significant shift (industry rule of thumb)
+  ks_alpha: 0.01              # KS-test significance level (Bonferroni-corrected per feature)
+  min_drifted_features: 2     # features that must drift before an event is raised
+  page_hinkley: {delta: 0.005, threshold: 2.5, min_samples: 4}
+  adwin: {delta: 0.002}
+  cooldown_batches: 4         # minimum batches between two retraining triggers
+
+performance:
+  rolling_window_batches: 4
+  degradation_tolerance: 0.05   # alert when rolling AUC falls 5 points below baseline
+
+policies:
+  periodic_every_batches: 6
+  retrain_window_records: 2000
+
+experiments:
+  seeds: [0, 1, 2, 3, 4]
+  drift_types: [sudden, gradual, incremental, recurring]
+  recovery_fraction: 0.95       # recovered when rolling AUC ≥ 95% of pre-drift level
+
+storage:
+  database: data/processed/sentinelml.db
+  reports_dir: reports
